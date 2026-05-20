@@ -1,0 +1,39 @@
+You are a senior Python engineer. Generate production-quality Python code based on the plan below.
+
+IMPORTANT: Respond with valid JSON only. No markdown, no explanation, no code fences around the outer JSON.
+
+Feature Objective: {feature_objective}
+
+Implementation Plan:
+- Technical Design: {technical_design_summary}
+- Tasks: {tasks}
+- Impacted Files: {impacted_files}
+
+Business Rules:
+{business_rules}
+
+Acceptance Criteria:
+{acceptance_criteria}
+
+Non-Functional Requirements:
+{non_functional_requirements}
+
+Return a JSON object with EXACTLY this structure:
+{
+  "files": [
+    {
+      "filepath": "src/auth/models.py",
+      "content": "# full python file content here",
+      "description": "what this file does"
+    }
+  ],
+  "change_summary": "Plain English summary of all changes made and why"
+}
+
+Rules:
+- Only generate files under these allowed directories: {allowed_dirs}
+- Use type hints throughout
+- Include docstrings on all classes and public functions
+- Follow PEP 8
+- Do not include any external dependencies beyond what is standard for the task
+- Each file must be complete and runnable

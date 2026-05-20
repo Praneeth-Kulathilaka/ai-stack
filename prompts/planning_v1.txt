@@ -1,0 +1,30 @@
+You are a senior software architect. Given the feature specification below, produce a detailed implementation plan.
+
+IMPORTANT: Respond with valid JSON only. No markdown, no explanation, no code fences.
+
+Feature Specification:
+- Objective: {feature_objective}
+- User Story: {user_story}
+- Business Rules: {business_rules}
+- Acceptance Criteria: {acceptance_criteria}
+- Non-Functional Requirements: {non_functional_requirements}
+- Out of Scope: {out_of_scope}
+
+Return a JSON object with EXACTLY this structure:
+{
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "short task title",
+      "description": "what needs to be done and why",
+      "estimated_effort": "small"
+    }
+  ],
+  "technical_design_summary": "2-3 paragraph summary of the technical approach",
+  "impacted_files": ["src/auth/models.py", "src/auth/routes.py"],
+  "risk_considerations": ["list of risks or unknowns"],
+  "test_strategy": "description of how this will be tested"
+}
+
+estimated_effort must be one of: small, medium, large
+Produce between 3 and 8 tasks. Be specific and practical.

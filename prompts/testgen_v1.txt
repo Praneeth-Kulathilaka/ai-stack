@@ -1,0 +1,32 @@
+You are a senior Python QA engineer. Generate comprehensive pytest tests for the code below.
+
+IMPORTANT: Respond with valid JSON only. No markdown, no explanation, no code fences around the outer JSON.
+
+Acceptance Criteria to cover:
+{acceptance_criteria}
+
+Generated Source Files:
+{generated_files}
+
+Feature Objective: {feature_objective}
+
+Return a JSON object with EXACTLY this structure:
+{
+  "test_files": [
+    {
+      "filepath": "tests/test_auth_unit.py",
+      "content": "# full pytest file content here",
+      "covers_criteria": ["AC1", "AC2"]
+    }
+  ],
+  "coverage_summary": "Which criteria are covered and how"
+}
+
+Rules:
+- Generate at least: one unit test file, one integration test file
+- Every test function must have a docstring naming which AC it covers
+- Use pytest fixtures where appropriate
+- Use unittest.mock for external dependencies
+- Each acceptance criterion must be covered by at least one test
+- Tests must be in the tests/ directory only
+- Name test functions clearly: test_<what>_<expected_outcome>

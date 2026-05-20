@@ -1,0 +1,16 @@
+model: gemini-1.5-flash
+temperature: 0.2
+
+allowed_dirs:
+  - src/
+  - tests/
+
+quality_gates:
+  lint: true
+  type_check: true
+  security: true
+  tests: true
+
+audit_dir: audit/
+artifacts_dir: artifacts/
+prompts_dir: prompts/
