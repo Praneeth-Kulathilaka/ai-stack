@@ -14,12 +14,12 @@ business_rules:
   - Failed login attempts are rate-limited to 5 per 15 minutes
 
 acceptance_criteria:
-  - AC1: User can register with a valid email and password
-  - AC2: User receives a 400 error if email is already registered
-  - AC3: User receives a 400 error if password does not meet requirements
-  - AC4: Registered user can log in and receive a JWT token
-  - AC5: JWT token is validated on protected routes
-  - AC6: Expired or invalid tokens return a 401 error
+  - "AC1: User can register with a valid email and password"
+  - "AC2: User receives a 400 error if email is already registered"
+  - "AC3: User receives a 400 error if password does not meet requirements"
+  - "AC4: Registered user can log in and receive a JWT token"
+  - "AC5: JWT token is validated on protected routes"
+  - "AC6: Expired or invalid tokens return a 401 error"
 
 non_functional_requirements:
   - Passwords must be hashed using bcrypt before storage

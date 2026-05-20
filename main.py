@@ -10,6 +10,13 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
+# Force UTF-8 output on Windows to avoid encoding errors with Unicode symbols
+os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+if sys.stdout.encoding != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+if sys.stderr.encoding != "utf-8":
+    sys.stderr.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+
 import typer
 import yaml
 from dotenv import load_dotenv

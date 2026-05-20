@@ -8,7 +8,7 @@ actual project directory. Files outside allowed_dirs are rejected.
 
 from __future__ import annotations
 import json
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 from .ai_client import AIClient, AIClientError
 from .audit import AuditLogger
@@ -38,12 +38,6 @@ def generate_code(
     Saves generated files to artifacts/ (not to the actual project yet).
     """
     try:
-        # Summarise generated files for the prompt context
-        generated_files_summary = [
-            {"filepath": f, "purpose": "to be generated"}
-            for f in plan.impacted_files
-        ]
-
         data = ai_client.call_json(
             stage="codegen",
             prompt_template="codegen_v1.txt",

@@ -6,7 +6,6 @@ impacted files, risks, and test strategy.
 """
 
 from __future__ import annotations
-import json
 from pathlib import Path
 
 from pydantic import ValidationError

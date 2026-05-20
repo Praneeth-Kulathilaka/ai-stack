@@ -12,7 +12,7 @@ import pytest
 import yaml
 
 from pipeline.intake import load_spec, SpecIntakeError
-from pipeline.models import FeatureSpec, PlanOutput, Task, QualityReport, GateResult
+from pipeline.models import FeatureSpec, QualityReport, GateResult
 from pipeline.audit import AuditLogger
 from pipeline.codegen import _validate_paths, PathViolationError, GeneratedFile
 from pipeline.context import ProjectContext
@@ -186,7 +186,7 @@ class TestPathValidation:
 class TestAuditLogger:
     def test_creates_log_file(self, temp_dir):
         """Audit logger creates a JSON log file on init."""
-        logger = AuditLogger("run_test_001", str(temp_dir))
+        AuditLogger("run_test_001", str(temp_dir))
         assert (temp_dir / "run_test_001.json").exists()
 
     def test_logs_stage(self, temp_dir):

@@ -14,8 +14,6 @@ Gates implemented:
 from __future__ import annotations
 import subprocess
 import sys
-from pathlib import Path
-
 from .audit import AuditLogger
 from .models import GateResult, QualityReport
 
