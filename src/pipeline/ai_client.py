@@ -1,5 +1,5 @@
 """
-AI Client — single gateway for all Gemini API calls.
+AI Client - single gateway for all Gemini API calls.
 
 Every AI interaction in the pipeline goes through this class.
 This ensures:

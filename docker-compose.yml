@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+
+    image: ai-pipeline:latest
+
+    # Mount local folders INTO the container
+    # This means generated files, audit logs, and specs
+    # are saved on YOUR machine, not lost when container stops
+    volumes:
+      - ./artifacts:/app/artifacts   # generated code saved here
+      - ./audit:/app/audit           # audit logs saved here
+      - ./specs:/app/specs           # your spec files read from here
+
+    # Load your API key from .env file
+    env_file:
+      - .env
+
+    # Keep terminal interactive so approval prompts work
+    stdin_open: true
+    tty: true
+
+    # Default command when you run docker-compose up
+    command: ["--help"]

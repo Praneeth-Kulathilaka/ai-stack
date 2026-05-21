@@ -1,5 +1,5 @@
 """
-Audit Logger — captures every meaningful event in the pipeline.
+Audit Logger - captures every meaningful event in the pipeline.
 
 Design principle: write to disk after every event so that even
 if the pipeline crashes mid-run, the audit trail is preserved.

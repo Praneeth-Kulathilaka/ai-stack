@@ -9,6 +9,7 @@ actual project directory. Files outside allowed_dirs are rejected.
 from __future__ import annotations
 import json
 from pathlib import Path
+import shutil
 
 from .ai_client import AIClient, AIClientError
 from .audit import AuditLogger
@@ -21,6 +22,7 @@ class CodegenError(Exception):
 
 class PathViolationError(CodegenError):
     """Raised when AI tries to write outside allowed directories."""
+
     pass
 
 
@@ -98,6 +100,7 @@ def apply_generated_files(
 
 # ─── Internal ─────────────────────────────────────────────────────────────────
 
+
 def _parse_output(data: dict) -> CodegenOutput:
     try:
         files = [GeneratedFile(**f) for f in data.get("files", [])]
@@ -108,9 +111,7 @@ def _parse_output(data: dict) -> CodegenOutput:
             change_summary=data["change_summary"],
         )
     except (KeyError, TypeError) as e:
-        raise CodegenError(
-            f"AI returned unexpected codegen structure: {e}"
-        ) from e
+        raise CodegenError(f"AI returned unexpected codegen structure: {e}") from e
 
 
 def _validate_paths(files: list[GeneratedFile], allowed_dirs: list[str]) -> None:
@@ -120,8 +121,10 @@ def _validate_paths(files: list[GeneratedFile], allowed_dirs: list[str]) -> None
     """
     for gf in files:
         filepath = gf.filepath.replace("\\", "/")
-        if not any(filepath.startswith(d.rstrip("/") + "/") or filepath.startswith(d)
-                   for d in allowed_dirs):
+        if not any(
+            filepath.startswith(d.rstrip("/") + "/") or filepath.startswith(d)
+            for d in allowed_dirs
+        ):
             raise PathViolationError(
                 f"Generated file '{gf.filepath}' is outside allowed directories: "
                 f"{allowed_dirs}. Pipeline halted for safety."
@@ -130,6 +133,8 @@ def _validate_paths(files: list[GeneratedFile], allowed_dirs: list[str]) -> None
 
 def _save_artifacts(output: CodegenOutput, artifacts_dir: str) -> list[str]:
     staging = Path(artifacts_dir) / "generated_code"
+    if staging.exists():
+        shutil.rmtree(staging)
     staging.mkdir(parents=True, exist_ok=True)
     paths: list[str] = []
 

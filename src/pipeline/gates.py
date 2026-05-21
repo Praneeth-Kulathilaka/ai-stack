@@ -20,6 +20,7 @@ from .models import GateResult, QualityReport
 
 class QualityGateError(Exception):
     """Raised when one or more quality gates fail."""
+
     pass
 
 
@@ -43,14 +44,24 @@ def run_quality_gates(
 
     for gate_name, runner in gate_runners.items():
         if not gate_config.get(gate_name, False):
-            results.append(GateResult(
-                gate=gate_name,
-                passed=True,
-                output="(skipped — disabled in config)",
-            ))
+            results.append(
+                GateResult(
+                    gate=gate_name,
+                    passed=True,
+                    output="(skipped — disabled in config)",
+                )
+            )
             continue
 
-        result = runner(target_dir)
+        try:
+            result = runner(target_dir)
+        except Exception as e:
+            result = GateResult(
+                gate=gate_name,
+                passed=False,
+                output=f"Gate execution failed: {e}",
+                errors=[str(e)],
+            )
         results.append(result)
         logger.log_validation(
             gate=result.gate,
@@ -70,9 +81,32 @@ def run_quality_gates(
 
 # ─── Individual Gate Runners ──────────────────────────────────────────────────
 
+
 def _run_lint(target_dir: str) -> GateResult:
     """Run ruff linter."""
-    result = _run_tool(["ruff", "check", target_dir, "--output-format=text"])
+    syntax_check = _run_tool(
+        [
+            sys.executable,
+            "-m",
+            "compileall",
+            target_dir,
+            "-q",
+        ]
+    )
+    if syntax_check.returncode != 0:
+        return GateResult(
+            gate="lint",
+            passed=False,
+            output=(
+                "Syntax check failed. Generated code is malformed.\n"
+                + syntax_check.stdout
+                + syntax_check.stderr
+            ),
+            errors=_extract_errors(syntax_check.stdout + syntax_check.stderr),
+        )
+
+    _run_tool(["ruff", "check", target_dir, "--fix"])
+    result = _run_tool(["ruff", "check", target_dir, "--output-format=concise"])
     return GateResult(
         gate="lint",
         passed=result.returncode == 0,
@@ -83,11 +117,14 @@ def _run_lint(target_dir: str) -> GateResult:
 
 def _run_type_check(target_dir: str) -> GateResult:
     """Run mypy type checker."""
-    result = _run_tool([
-        "mypy", target_dir,
-        "--ignore-missing-imports",
-        "--no-error-summary",
-    ])
+    result = _run_tool(
+        [
+            "mypy",
+            target_dir,
+            "--ignore-missing-imports",
+            "--no-error-summary",
+        ]
+    )
     return GateResult(
         gate="type_check",
         passed=result.returncode == 0,
@@ -98,12 +135,17 @@ def _run_type_check(target_dir: str) -> GateResult:
 
 def _run_security(target_dir: str) -> GateResult:
     """Run bandit security scanner."""
-    result = _run_tool([
-        "bandit", "-r", target_dir,
-        "-ll",          # only medium severity and above
-        "-q",           # quiet (no progress bar)
-        "--format", "text",
-    ])
+    result = _run_tool(
+        [
+            "bandit",
+            "-r",
+            target_dir,
+            "-ll",  # only medium severity and above
+            "-q",  # quiet (no progress bar)
+            "--format",
+            "txt",
+        ]
+    )
     # bandit returns 1 if issues found, 0 if clean
     return GateResult(
         gate="security",
@@ -115,15 +157,19 @@ def _run_security(target_dir: str) -> GateResult:
 
 def _run_tests(target_dir: str) -> GateResult:
     """Run pytest with coverage."""
-    result = _run_tool([
-        sys.executable, "-m", "pytest",
-        "tests/",
-        "-v",
-        "--tb=short",
-        f"--cov={target_dir}",
-        "--cov-report=term-missing",
-        "--no-header",
-    ])
+    result = _run_tool(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests/",
+            "-v",
+            "--tb=short",
+            f"--cov={target_dir}",
+            "--cov-report=term-missing",
+            "--no-header",
+        ]
+    )
     return GateResult(
         gate="tests",
         passed=result.returncode == 0,
@@ -133,6 +179,7 @@ def _run_tests(target_dir: str) -> GateResult:
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
+
 
 def _run_tool(cmd: list[str]) -> subprocess.CompletedProcess:
     return subprocess.run(
@@ -148,13 +195,11 @@ def _extract_errors(output: str) -> list[str]:
         line.strip()
         for line in output.splitlines()
         if line.strip() and ("error" in line.lower() or "E " in line)
-    ][:10]  # cap at 10 to keep audit logs readable
+    ][
+        :10
+    ]  # cap at 10 to keep audit logs readable
 
 
 def _extract_test_failures(output: str) -> list[str]:
     """Extract FAILED test names from pytest output."""
-    return [
-        line.strip()
-        for line in output.splitlines()
-        if line.startswith("FAILED")
-    ]
+    return [line.strip() for line in output.splitlines() if line.startswith("FAILED")]

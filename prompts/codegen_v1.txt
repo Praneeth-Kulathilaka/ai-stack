@@ -1,4 +1,4 @@
-You are a senior Python engineer. Generate production-quality Python code based on the plan below.
+You are a senior Python engineer. Generate production quality Python code based on the plan below.
 
 IMPORTANT: Respond with valid JSON only. No markdown, no explanation, no code fences around the outer JSON.
 

@@ -31,8 +31,7 @@ def generate_tests(
     """
     # Build a summary of generated files to pass as context
     generated_files_context = [
-        {"filepath": f.filepath, "content": f.content}
-        for f in codegen_output.files
+        {"filepath": f.filepath, "content": f.content} for f in codegen_output.files
     ]
 
     try:
@@ -82,9 +81,14 @@ def apply_generated_tests(
 
 # ─── Internal ─────────────────────────────────────────────────────────────────
 
+
 def _parse_output(data: dict) -> TestgenOutput:
     try:
-        test_files = [GeneratedTest(**t) for t in data.get("test_files", [])]
+        raw_files = data.get("test_files", [])
+        for item in raw_files:
+            if "covers_criteria" not in item or item["covers_criteria"] is None:
+                item["covers_criteria"] = []
+        test_files = [GeneratedTest(**t) for t in raw_files]
         if not test_files:
             raise TestgenError("AI returned no test files")
         return TestgenOutput(
@@ -92,9 +96,7 @@ def _parse_output(data: dict) -> TestgenOutput:
             coverage_summary=data["coverage_summary"],
         )
     except (KeyError, TypeError) as e:
-        raise TestgenError(
-            f"AI returned unexpected testgen structure: {e}"
-        ) from e
+        raise TestgenError(f"AI returned unexpected testgen structure: {e}") from e
 
 
 def _save_artifacts(output: TestgenOutput, artifacts_dir: str) -> list[str]:

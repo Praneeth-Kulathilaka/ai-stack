@@ -1,9 +1,9 @@
 """
-Approval Workflow — human checkpoints before critical pipeline stages.
+Approval Workflow - human checkpoints before critical pipeline stages.
 
 Two checkpoints:
-  1. pre_implementation  — after planning, before code is generated
-  2. pre_deployment      — after quality gates, before files are written to project
+  1. pre_implementation  - after planning, before code is generated
+  2. pre_deployment      - after quality gates, before files are written to project
 
 Design principle: approval decisions are always logged to the audit trail,
 whether approved or rejected.
@@ -86,7 +86,7 @@ def request_deployment_approval(
     console.print("[green]✓ Deployment approved. Writing files.[/green]\n")
 
 
-# ─── Display Helpers ──────────────────────────────────────────────────────────
+# ─── Display Helpers ────────────────────────────────────────────────────────
 
 
 def _print_plan_summary(plan: PlanOutput) -> None:
