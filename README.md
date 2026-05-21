@@ -47,7 +47,7 @@ python main.py audit list
 python main.py audit show <run_id>
 ```
 
-## Running with Docker
+## Running with Docker (Recommended)
 
 ### Build the image
 
@@ -64,20 +64,11 @@ docker run --env-file .env ai-pipeline validate specs/auth_feature.yaml
 # Generate a plan
 docker run -it --env-file .env ai-pipeline plan specs/auth_feature.yaml
 
-# Full pipeline run — output to a folder on your machine (also persist audit/artifacts)
-docker run -it --env-file .env \
-	-v ./output:/output \
-	-v ./audit:/app/audit \
-	-v ./artifacts:/app/artifacts \
-	ai-pipeline run specs/auth_feature.yaml --root /output
+# Full pipeline run — output to a folder on your machine
+docker run -it --env-file .env -v ./output:/output ai-pipeline run specs/auth_feature.yaml --root /output
 
 # Use your own spec file from the host
-docker run -it --env-file .env \
-	-v ./my-specs:/app/specs \
-	-v ./output:/output \
-	-v ./audit:/app/audit \
-	-v ./artifacts:/app/artifacts \
-	ai-pipeline run specs/my_feature.yaml --root /output
+docker run -it --env-file .env -v ./my-specs:/app/specs -v ./output:/output ai-pipeline run specs/my_feature.yaml --root /output
 ```
 
 > **Note:** Use `-it` for interactive commands (`plan`, `run`) since they require approval prompts. Use `-v` to mount a host directory so generated files persist after the container exits.
