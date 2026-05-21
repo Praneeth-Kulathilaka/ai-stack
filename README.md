@@ -10,7 +10,7 @@ An AI-assisted pipeline that transforms a structured feature specification into 
 ## Setup
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Praneeth-Kulathilaka/ai-stack
 cd ai-pipeline
 pip install -r requirements.txt
 ```
@@ -47,7 +47,7 @@ python main.py audit list
 python main.py audit show <run_id>
 ```
 
-## Running with Docker (Recommended)
+## Running with Docker
 
 ### Build the image
 
